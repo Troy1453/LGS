@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KARIŞTIR YARIŞTIR v20 - LGS Friendship</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #cfd8dc 0%, #90a4ae 100%);
+            color: #37474f;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 8px;
+            box-sizing: border-box;
+            transition: background 0.3s ease;
+            overflow: hidden;
+        }
+
+        /* DOĞRU/YANLIŞ ARKA PLAN FLAŞ EFEKTLERİ */
+        body.flash-correct {
+            animation: flash-green-anim 0.6s ease-in-out;
+        }
+        body.flash-wrong {
+            animation: flash-red-anim 0.6s ease-in-out;
+        }
+
+        @keyframes flash-green-anim {
+            0% { background: linear-gradient(135deg, #a5d6a7 0%, #66bb6a 100%); }
+            50% { background: #2e7d32; }
+            100% { background: linear-gradient(135deg, #cfd8dc 0%, #90a4ae 100%); }
+        }
+        @keyframes flash-red-anim {
+            0% { background: linear-gradient(135deg, #ef9a9a 0%, #ef5350 100%); }
+            50% { background: #c62828; }
+            100% { background: linear-gradient(135deg, #cfd8dc 0%, #90a4ae 100%); }
+        }
+
+        body.on-fire-active {
+            background: linear-gradient(135deg, #ff7043 0%, #d84315 100%) !important;
+        }
+
+        .logo-box-station {
+            position: relative; 
+            background-color: #263238; 
+            padding: 10px 4px; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            text-align: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.7), 0 4px 10px rgba(0,0,0,0.3);
+            border: 2px solid #455a64;
+            width: 100%;
+            max-width: 420px; 
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+        }
+
+        .logo-center-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px; 
+            width: 100%;
+            user-select: none;
+        }
+
+        .logo-text-ciddi {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 1.15rem;
+            margin: 0; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+            display: flex;
+            gap: 2px;
+        }
+        
+        .title-blue { color: #4285F4; }
+        .title-red { color: #EA4335; }
+        .title-yellow { color: #FBBC05; }
+        .title-green { color: #34A853; }
+
+        .container {
+            background-color: #eceff1;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            border: 1px solid #b0bec5;
+            box-sizing: border-box;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .live-clock { font-size: 0.72rem; font-weight: bold; color: #546e7a; margin-bottom: 2px; }
+        .countdown-box { font-size: 0.72rem; font-weight: bold; background-color: #37474f; color: #fff; padding: 3px; border-radius: 4px; margin-bottom: 8px; }
+        .countdown-highlight { color: #ffb74d; }
+
+        .day-word-container { background-color: #37474f; color: #eceff1; padding: 8px; border-radius: 10px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 2px; }
+        .day-word-title { font-size: 0.7rem; text-transform: uppercase; color: #81d4fa; font-weight: bold; }
+        .day-word-body { font-size: 0.95rem; font-weight: bold; }
+
+        .score-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            background-color: #cfd8dc; 
+            padding: 6px 10px; 
+            border-radius: 6px; 
+            margin-bottom: 8px; 
+            color: #37474f; 
+            border: 1px solid #b0bec5; 
+        }
+        .main-rekor-badge {
+            color: #d32f2f;
+            font-size: 1.25rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .quiz-start-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+        
+        .control-btn.main-unit-btn { 
+            display: block; 
+            width: 100%; 
+            padding: 14px; 
+            font-size: 1.35rem; 
+            font-weight: 900; 
+            border: 2px solid #b71c1c; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            color: #fff; 
+            background-color: #d32f2f; 
+            text-align: center;
+        }
+        .control-btn.main-unit-btn:hover { background-color: #b71c1c; }
+        
+        .control-btn.sub-unit-btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border: 1px solid #546e7a;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #78909c;
+            text-align: center;
+        }
+        .control-btn.sub-unit-btn:hover { background-color: #546e7a; }
+
+        .table-container { max-height: 100px; overflow-y: auto; border: 1px solid #b0bec5; border-radius: 8px; margin-bottom: 8px; background: #f5f7f8; }
+        .main-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; text-align: left; }
+        .main-table th, .main-table td { padding: 5px; border-bottom: 1px solid #cfd8dc; }
+        .main-table th { background: #cfd8dc; position: sticky; top: 0; color: #37474f; }
+
+        .bottom-controls { background-color: #ffcdd2; border: 1px dashed #e57373; padding: 6px; border-radius: 8px; margin-bottom: 8px; }
+        .wrong-count-text { font-size: 0.75rem; margin-bottom: 4px; font-weight: bold; color: #c62828; }
+        .btn-group { display: flex; gap: 4px; }
+        .sub-btn { flex: 1; padding: 6px; font-size: 0.75rem; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; color: white; }
+        .btn-test { background-color: #e57373; color: #fff; }
+        .btn-reset { background-color: #b0bec5; color: #37474f; border: 1px solid #90a4ae; }
+
+        .error-list-section { background-color: #f5f7f8; border: 1px solid #cfd8dc; border-radius: 8px; padding: 6px; text-align: left; margin-bottom: 8px;}
+        .error-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #37474f; font-weight: bold; border-bottom: 1px solid #cfd8dc; padding-bottom: 2px; margin-bottom: 4px; }
+        .error-tags-container { max-height: 60px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 3px; }
+        .error-badge { background-color: #ffcdd2; color: #c62828; border: 1px solid #ef5350; padding: 1px 4px; border-radius: 3px; font-size: 0.6rem; font-weight: bold; }
+
+        .dashboard-report-section { background-color: #fff9c4; border: 1px solid #fbc02d; border-radius: 8px; padding: 8px; text-align: left; font-size: 0.75rem; color: #5d4037; display: none; margin-bottom: 8px; }
+        .report-header-title { font-weight: bold; border-bottom: 1px solid #fbc02d; padding-bottom: 2px; margin-bottom: 4px; text-transform: uppercase; font-size: 0.7rem; }
+        .report-scroll { max-height: 120px; overflow-y: auto; line-height: 1.4; font-family: monospace; white-space: pre-wrap; }
+
+        /* OYUN EKRANI VE ÜST NAVİGASYON */
+        .game-nav-bar { display: flex; gap: 4px; margin-bottom: 6px; justify-content: space-between; }
+        .nav-btn { flex: 1; padding: 6px; font-size: 0.75rem; font-weight: bold; color: #37474f; border: 1px solid #b0bec5; border-radius: 6px; cursor: pointer; background-color: #cfd8dc; }
+        .nav-btn.danger { background-color: #e57373; color: #fff; border-color: #e57373; }
+        .nav-btn.warn { background-color: #ffb74d; color: #37474f; border-color: #ffa726; }
+
+        .game-score-row-heavy {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 800;
+            background-color: #b0bec5;
+            padding: 6px 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            color: #1c2833;
+            border: 1px solid #78909c;
+        }
+
+        /* BÜYÜK VE YANIP SÖNEN SKOR YAZISI */
+        .live-score-box {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #263238;
+            transition: color 0.1s ease;
+        }
+        .live-score-box.score-changed-flash {
+            animation: score-red-flash 0.4s ease-in-out 2;
+        }
+        @keyframes score-red-flash {
+            0% { color: #263238; transform: scale(1); }
+            50% { color: #d32f2f; transform: scale(1.15); }
+            100% { color: #263238; transform: scale(1); }
+        }
+
+        .combo-badge-zone { font-size: 0.75rem; font-weight: 900; color: #e65100; min-height: 14px; margin-bottom: 2px; text-transform: uppercase; }
+        .timer-display { font-weight: bold; font-size: 1.4rem; color: #37474f; background-color: #cfd8dc; padding: 2px 10px; border-radius: 6px; display: inline-block; margin-bottom: 4px; font-family: monospace; line-height: 1.1; }
+
+        /* YANIP SÖNEN SÜRE BİTTİ YAZISI */
+        .timer-display.timeout-active {
+            background-color: #e57373 !important;
+            color: #fff !important;
+            animation: blink-timeout-text 0.4s infinite alternate;
+            font-size: 1.1rem;
+            padding: 6px;
+        }
+        @keyframes blink-timeout-text {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .word-display { font-size: 1.8rem; font-weight: bold; color: #263238; margin-bottom: 8px; text-align: center; background-color: #cfd8dc; padding: 10px; border-radius: 10px; border: 2px solid #b0bec5; word-wrap: break-word; }
+        .word-display.boss-active { background-color: #212121 !important; color: #ff1744 !important; border: 2px dashed #ff1744 !important; font-size: 1.9rem; padding: 10px; }
+
+        .options-container { display: flex; flex-direction: column; gap: 6px; margin-bottom: 6px; }
+        /* SADECE TÜRKÇE METİN BARINDIRAN ŞIK BUTONLARI */
+        .option-btn { background-color: #37474f; border: 2px solid #455a64; padding: 12px 14px; font-size: 1.15rem; border-radius: 8px; cursor: pointer; text-align: center; width: 100%; color: #eceff1; font-weight: bold; box-sizing: border-box; justify-content: center; }
+        .option-btn:hover:not(.correct):not(.wrong):not(:disabled) { background-color: #455a64; }
+        
+        .option-btn.correct { background-color: #2e7d32 !important; border-color: #1b5e20 !important; color: #fff !important; }
+        .option-btn.wrong { background-color: #c62828 !important; border-color: #b71c1c !important; color: #fff !important; }
+
+        .live-log-zone { border-top: 1px solid #b0bec5; padding-top: 4px; }
+        .lobby-overlay { background-color: #263238; color: #fff; border-radius: 14px; padding: 20px 10px; text-align: center; }
+
+        .screen { display: none; }
+        .active-screen { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="logo-box-station">
+        <div class="logo-center-row">
+            <span style="font-size:1.15rem; transform: rotate(-15deg); display:inline-block;">🚀</span>
+            <h1 class="logo-text-ciddi">
+                <span class="title-blue">K</span><span class="title-red">A</span><span class="title-yellow">R</span><span class="title-blue">I</span><span class="title-green">Ş</span><span class="title-red">T</span><span class="title-blue">I</span><span class="title-red">R</span> 
+                &nbsp;
+                <span class="title-yellow">Y</span><span class="title-blue">A</span><span class="title-green">R</span><span class="title-red">I</span><span class="title-blue">Ş</span><span class="title-red">T</span><span class="title-blue">I</span><span class="title-green">R</span>
+            </h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="dash-screen" class="screen active-screen">
+            <div id="live-clock-display" class="live-clock">...</div>
+            <div id="countdown-display" class="countdown-box">Hedef Sayıcı Hesaplanıyor...</div>
+
+            <div class="day-word-container">
+                <div class="day-word-title">🎯 Günün Kelimesi</div>
+                <div id="focus-display" class="day-word-body">Veri bekleniyor...</div>
+                <button class="action-sm-btn-new" onclick="nextFocusWord()">Değiştir 🔄</button>
+            </div>
+
+            <div class="score-row">
+                <div class="main-rekor-badge">REKOR: <span id="global-score-display">0</span></div>
+                <div>Havuz: <span id="pool-count-display">0</span> Kelime</div>
+            </div>
+
+            <div class="quiz-start-grid">
+                <button class="control-btn main-unit-btn" id="btn-mode-random20" onclick="openLobbyRoom('random20')">🚀 LGS 1.Ünite (Friendship)</button>
+                <button class="control-btn sub-unit-btn" id="btn-mode-all" onclick="openLobbyRoom('all')"> Tüm Kelimeler Listesi (76 Kelime)</button>
+            </div>
+
+            <div class="table-container">
+                <table class="main-table">
+                    <thead>
+                        <tr>
+                            <th>Kelime</th>
+                            <th>Anlamı</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody id="main-table-body"></tbody>
+                </table>
+            </div>
+
+            <div class="bottom-controls">
+                <div class="wrong-count-text">❌ Yanlış Yapılan Kelimeler: <span id="wrong-count-badge">0</span></div>
+                <div class="btn-group">
+                    <button class="sub-btn btn-test" onclick="startWrongOnlyQuiz()">Hataları Test Et</button>
+                    <button class="sub-btn btn-reset" onclick="clearAllData()">Sıfırla</button>
+                </div>
+            </div>
+
+            <div class="error-list-section">
+                <div class="error-header">
+                    <span>📋 Yapılan Hatalar</span>
+                    <button class="action-sm-btn-new" style="margin:0; padding:2px 6px;" onclick="copyWrongList()">Kopyala</button>
+                </div>
+                <div id="error-tags-wrapper" class="error-tags-container"></div>
+            </div>
+
+            <div id="dashboard-report-box" class="dashboard-report-section">
+                <div class="report-header-title">📊 Oyun Performans Analizi Geçmişi</div>
+                <div id="dashboard-report-content" class="report-scroll">Henüz oyun oynanmadı...</div>
+            </div>
+        </div>
+
+        <div id="lobby-screen" class="screen">
+            <div class="lobby-overlay">
+                <div class="rocket-icon">🚀</div>
+                <h2 id="lobby-title-text" style="color:#fff; margin:0 0 10px 0; font-size:1.3rem;">YARIŞMA BAŞLIYOR</h2>
+                <p style="color:#b0bec5; font-size:0.85rem; margin-bottom:15px;">Kelimeler Hazırlanıyor, Hazır mısın?</p>
+                <button class="control-btn" style="background-color:#2e7d32; font-size:1.2rem; padding:12px; color:white; border-color:#4caf50; text-align:center; font-weight: bold; width:100%; border-radius:8px;" onclick="triggerQuizFromLobby()">BAŞLAT</button>
+                <button class="action-sm-btn-new" style="margin-top:10px; display:block; width:100%; padding:6px;" onclick="exitToMenu()">Vazgeç</button>
+            </div>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="game-nav-bar">
+                <button class="nav-btn" onclick="exitToMenu()">Ana Menü</button>
+                <button id="pause-btn" class="nav-btn warn" onclick="togglePauseGame()">Durdur</button>
+                <button class="nav-btn danger" onclick="forceEndGameConfirm()">Oyunu Bitir</button>
+            </div>
+
+            <div class="game-score-row-heavy">
+                <div style="font-size: 1.1rem;">Soru: <span id="current-q-num">1</span>/<span id="total-q-num">20</span></div>
+                <div class="live-score-box" id="live-score-wrapper">Skor: <span id="live-score">0</span></div>
+            </div>
+
+            <div id="combo-display" class="combo-badge-zone"></div>
+            <div class="timer-display" id="timer-display">5.00</div>
+
+            <div id="quiz-card-wrapper">
+                <div class="word-display" id="question-target">...</div>
+
+                <div class="options-container">
+                    <button class="option-btn" id="opt-0" onclick="processSelection(0)"><span id="opt-text-0"></span></button>
+                    <button class="option-btn" id="opt-1" onclick="processSelection(1)"><span id="opt-text-1"></span></button>
+                    <button class="option-btn" id="opt-2" onclick="processSelection(2)"><span id="opt-text-2"></span></button>
+                    <button class="option-btn" id="opt-3" onclick="processSelection(3)"><span id="opt-text-3"></span></button>
+                </div>
+            </div>
+
+            <div class="live-log-zone">
+                <div id="live-log-body" style="max-height:45px; overflow-y:auto; font-size:0.7rem; text-align:left; line-height:1.3;"></div>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    const rawWordList = [
+        { word: "Accept", correct: "Kabul etmek" },
+        { word: "Adventurous", correct: "Maceracı" },
+        { word: "Aggressive", correct: "Kavgacı" },
+        { word: "Amusing", correct: "Eğlenceli" },
+        { word: "Apologize", correct: "Özür dilemek" },
+        { word: "Argue", correct: "Tartışmak" },
+        { word: "Arrogant", correct: "Kibirli" },
+        { word: "Attach importance", correct: "Önem vermek" },
+        { word: "Attend", correct: "Katılmak" },
+        { word: "Back up", correct: "Destek çıkmak" },
+        { word: "Bad-tempered", correct: "Kötü huylu" },
+        { word: "Beverage", correct: "İçecek" },
+        { word: "Calm", correct: "Sakin olmak" },
+        { word: "Caring", correct: "İlgili, Şefkatli" },
+        { word: "Celebrate", correct: "Kutlamak" },
+        { word: "Change", correct: "Değiştirmek" },
+        { word: "Common", correct: "Ortak" },
+        { word: "Count on", correct: "Güvenmek" },
+        { word: "Date", correct: "Tarih" },
+        { word: "Deadline", correct: "Son bitiş tarihi" },
+        { word: "Depend on", correct: "Güvenmek" },
+        { word: "Determind", correct: "Kararlı" },
+        { word: "Discuss", correct: "Tartışmak" },
+        { word: "Event", correct: "Etkinlik" },
+        { word: "Exciting", correct: "Heyecanlı" },
+        { word: "Excuse", correct: "Mazaret, Bahane" },
+        { word: "Expect", correct: "Ummak, beklenti" },
+        { word: "Fair", correct: "Adil" },
+        { word: "Fee", correct: "Ücret" },
+        { word: "Free", correct: "Ücretsiz" },
+        { word: "Generous", correct: "Cömert" },
+        { word: "Get on well", correct: "İyi geçinmek" },
+        { word: "Honest", correct: "Dürüst" },
+        { word: "Inform", correct: "Bilgilendirmek" },
+        { word: "Interested", correct: "İlgilenmek" },
+        { word: "Interesting", correct: "İlginç" },
+        { word: "Invite", correct: "Davet etmek" },
+        { word: "Jealous", correct: "Kıskanç" },
+        { word: "Laid back", correct: "Rahat, umursamaz" },
+        { word: "Lie", correct: "Yalan söylemek" },
+        { word: "Loyal", correct: "Sadık" },
+        { word: "Mean", correct: "1.Cimri 2.Anlam" },
+        { word: "Memory", correct: "Anı, Hatıra" },
+        { word: "Mind", correct: "Akıl, fikir" },
+        { word: "Miss", correct: "Özlemek" },
+        { word: "Odd", correct: "Farklı, Uyumsuz" },
+        { word: "Offer", correct: "Teklif" },
+        { word: "Opinion", correct: "Fikir, düşünce" },
+        { word: "Opportunity", correct: "Fırsat" },
+        { word: "Order", correct: "1.Sipariş 2.Düzen, Sıra" },
+        { word: "Pick up", correct: "Almak, toplamak" },
+        { word: "Promise", correct: "Söz vermek" },
+        { word: "Reason", correct: "Sebep" },
+        { word: "Receiver", correct: "Alıcı" },
+        { word: "Refuse", correct: "Reddetmek" },
+        { word: "Reliable", correct: "Güvenilir" },
+        { word: "Rely on", correct: "Güvenmek" },
+        { word: "Reply", correct: "Yanıtlamak" },
+        { word: "Response", correct: "Yanıtlamak" },
+        { word: "Reunion", correct: "Yeniden buluşmak" },
+        { word: "Self-centered", correct: "Ben merkezci" },
+        { word: "Sender", correct: "Gönderici" },
+        { word: "Share", correct: "Paylaşmak" },
+        { word: "Similar", correct: "Benzer" },
+        { word: "Sneaky", correct: "Sinsi" },
+        { word: "Stingy", correct: "Cimri" },
+        { word: "Stubborn", correct: "İnatçı" },
+        { word: "Supportive", correct: "Destekleyici" },
+        { word: "Tactful", correct: "Düşünceli" },
+        { word: "Tell", correct: "Söylemek" },
+        { word: "Traditional", correct: "Geleneksel" },
+        { word: "Trait", correct: "Özellik" },
+        { word: "Trust", correct: "Güvenmek" },
+        { word: "Truth", correct: "Doğru, Dürüstlük" },
+        { word: "Understanding", correct: "Anlayışlı" },
+        { word: "Unreliable", correct: "Güvenilmez" }
+    ];
+
+    let userProgress = JSON.parse(localStorage.getItem('kr_v20_progress')) || {};
+    let globalScore = parseInt(localStorage.getItem('kr_v20_score')) || 0;
+    let gameHistoryScores = JSON.parse(localStorage.getItem('kr_v20_history_scores')) || [];
+    let focusPoolIndex = 0;
+    let selectedFilterMode = 'random20';
+
+    let quizQueue = [];
+    let activeIndex = 0;
+    let currentQuizScore = 0;
+    let timerId = null;
+    let timeStart = null;
+    let timeRemainingOnPause = null;
+    let isPaused = false;
+    let isTimeoutTriggered = false;
+
+    let sessionCorrectCount = 0;
+    let sessionWrongCount = 0;
+    let comboStreak = 0;
+    let isOnFire = false;
+    let speedStreakCount = 0; 
+    let isBossSavas = false;
+    let maxTimerLimit = 5.00;
+    let alertSoundLoopId = null;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        let now = audioCtx.currentTime;
+        if (type === 'correct') {
+            let notes = [523.25, 659.25, 783.99]; 
+            notes.forEach((freq, idx) => {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, now + (idx * 0.06));
+                gain.gain.setValueAtTime(0.25, now + (idx * 0.06));
+                gain.gain.exponentialRampToValueAtTime(0.01, now + (idx * 0.06) + 0.25);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now + (idx * 0.06)); osc.stop(now + (idx * 0.06) + 0.25);
+            });
+        } else if (type === 'wrong') {
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(340, now);
+            osc.frequency.exponentialRampToValueAtTime(60, now + 0.3);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(now); osc.stop(now + 0.3);
+        }
+    }
+
+    function startClockAndCountdown() {
+        const targetDate = new Date("June 21, 2026 10:00:00").getTime();
+        setInterval(() => {
+            const now = new Date();
+            const days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+            const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+            
+            document.getElementById("live-clock-display").innerText = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}, ${days[now.getDay()]} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            const diff = targetDate - now.getTime();
+            if (diff <= 0) {
+                document.getElementById("countdown-display").innerText = "Hedef Güne Ulaşıldı!";
+            } else {
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                document.getElementById("countdown-display").innerHTML = `⏳ Sınav Sayacı: <span class="countdown-highlight">${d} Gün, ${h} Saat, ${m} Dakika, ${s} Saniye</span>`;
+            }
+        }, 1000);
+    }
+
+    function calculateFocusWord() {
+        let wrongPool = rawWordList.filter(item => userProgress[item.word] && userProgress[item.word].status === 'wrong');
+        if (wrongPool.length > 0) {
+            let targetItem = wrongPool[focusPoolIndex % wrongPool.length];
+            document.getElementById("focus-display").innerText = `${targetItem.word} ➔ ${targetItem.correct}`;
+        } else {
+            let defaultItem = rawWordList[focusPoolIndex % rawWordList.length];
+            document.getElementById("focus-display").innerText = `${defaultItem.word} ➔ ${defaultItem.correct}`;
+        }
+    }
+
+    function nextFocusWord() {
+        focusPoolIndex++;
+        calculateFocusWord();
+    }
+
+    function buildDashboard() {
+        document.getElementById("pool-count-display").innerText = rawWordList.length;
+        const tbody = document.getElementById("main-table-body");
+        tbody.innerHTML = "";
+        let totalWrongs = 0;
+        const tagsWrapper = document.getElementById("error-tags-wrapper");
+        tagsWrapper.innerHTML = "";
+
+        rawWordList.forEach(item => {
+            const data = userProgress[item.word];
+            if (data && data.status === 'wrong') {
+                totalWrongs++;
+                const span = document.createElement("span");
+                span.className = "error-badge";
+                span.innerText = `${item.word} ❌`;
+                tagsWrapper.appendChild(span);
+            }
+        });
+
+        rawWordList.slice(0, 15).forEach(item => {
+            const data = userProgress[item.word];
+            let statusMarkup = `<span class="status-text status-unseen">Görülmedi</span>`;
+            if (data) {
+                if (data.status === 'wrong') statusMarkup = `<span class="status-text status-wrong">Hatalı</span>`;
+                else if (data.status === 'correct') statusMarkup = `<span class="status-text status-correct">${data.time} sn</span>`;
+            }
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td><strong>${item.word}</strong></td><td>${item.correct}</td><td>${statusMarkup}</td>`;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById("wrong-count-badge").innerText = totalWrongs;
+        
+        let maxScore = globalScore;
+        if(gameHistoryScores.length > 0) {
+            maxScore = Math.max(...gameHistoryScores, globalScore);
+        }
+        document.getElementById("global-score-display").innerText = maxScore;
+        
+        renderHistoryReport();
+        calculateFocusWord();
+    }
+
+    function renderHistoryReport() {
+        const reportBox = document.getElementById("dashboard-report-box");
+        const reportContent = document.getElementById("dashboard-report-content");
+        if(gameHistoryScores.length > 0) {
+            let html = "";
+            gameHistoryScores.forEach((score, index) => {
+                html += `• ${index + 1}. Oyun Puanı: ${score} Puan\n`;
+            });
+            reportContent.innerHTML = html;
+            reportBox.style.display = "block";
+        }
+    }
+
+    function openLobbyRoom(filter) {
+        selectedFilterMode = filter;
+        const lobbyTitle = document.getElementById("lobby-title-text");
+        if (filter === 'random20') {
+            lobbyTitle.innerText = "LGS 1.ÜNİTE (20 KELİME)";
+        } else {
+            lobbyTitle.innerText = "TÜM KELİMELER LİSTESİ (76 KELİME)";
+        }
+        document.getElementById("dash-screen").className = "screen";
+        document.getElementById("lobby-screen").className = "screen active-screen";
+    }
+
+    function triggerQuizFromLobby() {
+        document.getElementById("lobby-screen").className = "screen";
+        document.getElementById("game-screen").className = "screen active-screen";
+
+        if (selectedFilterMode === 'random20') {
+            let pool = [...rawWordList];
+            quizQueue = [];
+            while(quizQueue.length < 20 && pool.length > 0) {
+                let randomIdx = Math.floor(Math.random() * pool.length);
+                quizQueue.push(pool.splice(randomIdx, 1)[0]);
+            }
+        } else {
+            quizQueue = [...rawWordList].sort(() => 0.5 - Math.random());
+        }
+        
+        initializeEngine();
+    }
+
+    function startWrongOnlyQuiz() {
+        const errors = rawWordList.filter(item => userProgress[item.word] && userProgress[item.word].status === 'wrong');
+        if(errors.length === 0) return alert("Test edilecek hatalı kelimeniz bulunmuyor!");
+        
+        document.getElementById("dash-screen").className = "screen";
+        document.getElementById("game-screen").className = "screen active-screen";
+        
+        quizQueue = errors.sort(() => 0.5 - Math.random());
+        initializeEngine();
+    }
+
+    function initializeEngine() {
+        activeIndex = 0;
+        currentQuizScore = 0;
+        isPaused = false;
+        sessionCorrectCount = 0;
+        sessionWrongCount = 0;
+        comboStreak = 0;
+        isOnFire = false;
+        speedStreakCount = 0;
+        isBossSavas = false;
+        document.body.classList.remove("on-fire-active", "flash-correct", "flash-wrong");
+        document.getElementById("combo-display").innerText = "";
+
+        document.getElementById("pause-btn").innerText = "Durdur";
+        document.getElementById("live-score").innerText = currentQuizScore;
+        document.getElementById("total-q-num").innerText = quizQueue.length;
+        document.getElementById("live-log-body").innerHTML = "";
+
+        if(alertSoundLoopId) { clearInterval(alertSoundLoopId); alertSoundLoopId = null; }
+
+        displayQuestion();
+    }
+
+    function displayQuestion() {
+        if(alertSoundLoopId) { clearInterval(alertSoundLoopId); alertSoundLoopId = null; }
+        clearInterval(timerId);
+        resetOptionStyles();
+        isTimeoutTriggered = false;
+        
+        // Soru sayacını düzgün göstermek için aktif soru indisini güncelliyoruz
+        document.getElementById("current-q-num").innerText = activeIndex + 1;
+
+        const timerBox = document.getElementById("timer-display");
+        timerBox.className = "timer-display";
+        timerBox.innerText = "5.00";
+
+        let currentItem = quizQueue[activeIndex];
+        const targetElement = document.getElementById("question-target");
+
+        if ((activeIndex + 1) % 15 === 0) {
+            isBossSavas = true;
+            maxTimerLimit = 2.50; 
+            targetElement.classList.add("boss-active");
+            document.getElementById("combo-display").innerHTML = "☠️ PATRON MODU! ☠️";
+        } else {
+            isBossSavas = false;
+            maxTimerLimit = 5.00;
+            updateComboUI();
+        }
+
+        const pool = rawWordList.filter(w => w.correct !== currentItem.correct);
+        let shuffledPool = [...pool].sort(() => 0.5 - Math.random());
+        
+        let choices = [
+            { label: currentItem.correct, valid: true },
+            { label: shuffledPool[0].correct, valid: false },
+            { label: shuffledPool[1].correct, valid: false },
+            { label: shuffledPool[2].correct, valid: false }
+        ];
+        
+        choices.sort(() => 0.5 - Math.random());
+
+        targetElement.innerText = isBossSavas ? `👑 ${currentItem.word.toUpperCase()}` : currentItem.word;
+
+        for (let i = 0; i < 4; i++) {
+            const btn = document.getElementById(`opt-${i}`);
+            btn.innerHTML = choices[i].label; // A) B) C) D) İfadeleri tamamen kaldırıldı
+            btn.dataset.valid = choices[i].valid;
+            btn.disabled = false;
+        }
+
+        runTimer(maxTimerLimit);
+    }
+
+    function runTimer(startTimeDuration) {
+        const timerBox = document.getElementById("timer-display");
+        timeStart = performance.now();
+        timerId = setInterval(() => {
+            if (isPaused) return;
+            const delta = (performance.now() - timeStart) / 1000;
+            let countdown = (startTimeDuration - delta).toFixed(2);
+
+            if (countdown <= 0) {
+                countdown = "0.00"; 
+                timerBox.innerText = countdown;
+                clearInterval(timerId); 
+                handleTimeoutLock();
+            } else {
+                timerBox.innerText = countdown;
+            }
+        }, 10);
+    }
+
+    function handleTimeoutLock() {
+        isTimeoutTriggered = true;
+        const timerBox = document.getElementById("timer-display");
+        timerBox.innerHTML = "Süre Bitti!<br>Seçim Bekleniyor...";
+        timerBox.classList.add("timeout-active");
+        
+        // Şık işaretlenene kadar döngü halinde yanlış sesini çalar
+        playSound('wrong');
+        if(alertSoundLoopId) clearInterval(alertSoundLoopId);
+        alertSoundLoopId = setInterval(() => {
+            playSound('wrong');
+        }, 1000);
+
+        breakCombo();
+        sessionWrongCount++; 
+    }
+
+    function breakCombo() {
+        comboStreak = 0; speedStreakCount = 0;
+        if(isOnFire) { isOnFire = false; document.body.classList.remove("on-fire-active"); }
+        updateComboUI();
+    }
+
+    function updateComboUI() {
+        if (isBossSavas) return;
+        const comboZone = document.getElementById("combo-display");
+        if (isOnFire) {
+            comboZone.innerHTML = `🔥 ON FIRE! (2X BONUS) 🔥 Kombo: ${comboStreak}x`;
+        } else if (comboStreak > 0) {
+            comboZone.innerText = `✨ ${comboStreak}x Kombo!`;
+        } else {
+            comboZone.innerText = "";
+        }
+    }
+
+    function togglePauseGame() {
+        if (isTimeoutTriggered) return;
+        const pauseBtn = document.getElementById("pause-btn");
+        const buttons = [document.getElementById("opt-0"), document.getElementById("opt-1"), document.getElementById("opt-2"), document.getElementById("opt-3")];
+        
+        if (!isPaused) {
+            isPaused = true; pauseBtn.innerText = "Devam Et";
+            buttons.forEach(b => b.disabled = true);
+            clearInterval(timerId);
+            const currentVal = parseFloat(document.getElementById("timer-display").innerText);
+            timeRemainingOnPause = isNaN(currentVal) ? maxTimerLimit : currentVal;
+        } else {
+            isPaused = false; pauseBtn.innerText = "Durdur";
+            buttons.forEach(b => b.disabled = false);
+            runTimer(timeRemainingOnPause);
+        }
+    }
+
+    function triggerScoreFlash() {
+        const wrapper = document.getElementById("live-score-wrapper");
+        wrapper.classList.remove("score-changed-flash");
+        void wrapper.offsetWidth; // DOM'u tetiklemek için reflow
+        wrapper.classList.add("score-changed-flash");
+    }
+
+    function triggerBodyFlash(status) {
+        document.body.classList.remove("flash-correct", "flash-wrong");
+        void document.body.offsetWidth;
+        if(status === 'correct') {
+            document.body.classList.add("flash-correct");
+        } else {
+            document.body.classList.add("flash-wrong");
+        }
+    }
+
+    function processSelection(index) {
+        if(alertSoundLoopId) { clearInterval(alertSoundLoopId); alertSoundLoopId = null; }
+        clearInterval(timerId);
+        
+        let elapsed = ((performance.now() - timeStart) / 1000).toFixed(2);
+        const buttons = [document.getElementById("opt-0"), document.getElementById("opt-1"), document.getElementById("opt-2"), document.getElementById("opt-3")];
+        buttons.forEach(b => b.disabled = true);
+
+        const chosenBtn = buttons[index];
+        const isCorrect = chosenBtn.dataset.valid === "true";
+        let currentItem = quizQueue[activeIndex];
+        let points = 0;
+        let logItemMarkup = "";
+
+        if (isTimeoutTriggered) {
+            // Süre bittikten sonra yapılan seçimler
+            if (isCorrect) {
+                chosenBtn.classList.add("correct");
+                triggerBodyFlash('correct');
+            } else {
+                chosenBtn.classList.add("wrong");
+                triggerBodyFlash('wrong');
+                buttons.forEach(b => { if(b.dataset.valid === "true") b.classList.add("correct"); });
+            }
+            userProgress[currentItem.word] = { status: 'wrong', time: '0.00' };
+            logItemMarkup = `<div style="color: #ef6c00;">⏰ Zaman Aşımı: ${currentItem.word}</div>`;
+        } else {
+            // Normal sürede yapılan seçimler
+            if (isCorrect) {
+                chosenBtn.classList.add("correct");
+                playSound('correct');
+                triggerBodyFlash('correct'); // Yeşil Flaş
+                sessionCorrectCount++; 
+                
+                const ceilTime = Math.ceil(parseFloat(elapsed));
+                points = Math.max(1, 6 - ceilTime);
+
+                if (isBossSavas) points = 15; 
+                if (isOnFire) points = points * 2;
+                
+                currentQuizScore += points;
+                triggerScoreFlash(); // Kırmızı Skor Yanıp Sönmesi
+                userProgress[currentItem.word] = { status: 'correct', time: elapsed };
+                logItemMarkup = `<div style="color: #2e7d32;">✔️ Doğru: ${currentItem.word} (+${points} P)</div>`;
+
+                comboStreak++;
+                if (parseFloat(elapsed) <= 1.50) {
+                    speedStreakCount++;
+                    if (speedStreakCount >= 5 && !isOnFire) { isOnFire = true; document.body.classList.add("on-fire-active"); }
+                } else { speedStreakCount = 0; }
+            } else {
+                chosenBtn.classList.add("wrong");
+                playSound('wrong');
+                triggerBodyFlash('wrong'); // Kırmızı Flaş
+                buttons.forEach(b => { if(b.dataset.valid === "true") b.classList.add("correct"); });
+                sessionWrongCount++; 
+                
+                breakCombo();
+                currentQuizScore = Math.max(0, currentQuizScore - 3); 
+                triggerScoreFlash(); // Kırmızı Skor Yanıp Sönmesi
+                userProgress[currentItem.word] = { status: 'wrong', time: elapsed };
+                logItemMarkup = `<div style="color: #c62828;">❌ Hata: ${currentItem.word} (-3 P)</div>`;
+            }
+        }
+
+        document.getElementById("live-log-body").insertAdjacentHTML('afterbegin', logItemMarkup);
+        document.getElementById("live-score").innerText = currentQuizScore;
+        localStorage.setItem('kr_v20_progress', JSON.stringify(userProgress));
+
+        // Şık tıklandıktan sonra kısa bir görsel bekleme süresinin ardından bir sonraki soruya geçer
+        setTimeout(() => { advanceQuestionFlow(); }, 600);
+    }
+
+    function advanceQuestionFlow() {
+        activeIndex++;
+        if (activeIndex < quizQueue.length) {
+            displayQuestion();
+        } else {
+            publishDashboardReport();
+        }
+    }
+
+    function publishDashboardReport() {
+        if(alertSoundLoopId) { clearInterval(alertSoundLoopId); alertSoundLoopId = null; }
+        clearInterval(timerId);
+        document.body.classList.remove("on-fire-active", "flash-correct", "flash-wrong");
+        
+        gameHistoryScores.push(currentQuizScore);
+        localStorage.setItem('kr_v20_history_scores', JSON.stringify(gameHistoryScores));
+        
+        if(currentQuizScore > globalScore) {
+            globalScore = currentQuizScore;
+            localStorage.setItem('kr_v20_score', globalScore);
+        }
+
+        alert(`Oyun Bitti! 🎉\nToplam Skorunuz: ${currentQuizScore} Puan\nDoğru: ${sessionCorrectCount} | Yanlış: ${sessionWrongCount}`);
+        exitToMenu();
+    }
+
+    function forceEndGameConfirm() {
+        if(alertSoundLoopId) { clearInterval(alertSoundLoopId); alertSoundLoopId = null; }
+        clearInterval(timerId); 
+        if (confirm("Yarışmayı yarıda kesip bitirmek istediğinden emin misin?")) {
+            publishDashboardReport();
+        } else {
+            if (!isTimeoutTriggered) {
+                const timerBox = document.getElementById("timer-display");
+                runTimer(parseFloat(timerBox.innerText) || maxTimerLimit);
+            }
+        }
+    }
+
+    function exitToMenu() {
+        if(alertSoundLoopId) { clearInterval(alertSoundLoopId); alertSoundLoopId = null; }
+        clearInterval(timerId);
+        document.body.classList.remove("on-fire-active", "flash-correct", "flash-wrong");
+        document.getElementById("game-screen").className = "screen";
+        document.getElementById("lobby-screen").className = "screen";
+        document.getElementById("dash-screen").className = "screen active-screen";
+        buildDashboard();
+    }
+
+    function resetOptionStyles() {
+        for (let i = 0; i < 4; i++) { document.getElementById(`opt-${i}`).className = "option-btn"; }
+        document.getElementById("question-target").className = "word-display";
+    }
+
+    function copyWrongList() {
+        let arr = [];
+        rawWordList.forEach(item => { 
+            if (userProgress[item.word] && userProgress[item.word].status === 'wrong') {
+                arr.push(`${item.word} ➔ ${item.correct}`); 
+            }
+        });
+        if(arr.length === 0) return alert("Kopyalanacak veri yok!");
+        const dummy = document.createElement("textarea"); dummy.value = arr.join("\n");
+        document.body.appendChild(dummy); dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy);
+        alert("Hatalar kopyalandı!");
+    }
+
+    function clearAllData() {
+        if(confirm("Tüm verileri ve skor geçmişini sıfırlamak istiyor musunuz?")) {
+            userProgress = {}; globalScore = 0; gameHistoryScores = [];
+            localStorage.removeItem('kr_v20_progress'); localStorage.removeItem('kr_v20_score'); localStorage.removeItem('kr_v20_history_scores');
+            document.getElementById("dashboard-report-box").style.display = "none";
+            buildDashboard();
+        }
+    }
+
+    window.onload = function() {
+        startClockAndCountdown();
+        buildDashboard();
+    };
+</script>
+
+</body>
+</html>
